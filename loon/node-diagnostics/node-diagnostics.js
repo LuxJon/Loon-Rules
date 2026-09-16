@@ -1,5 +1,5 @@
 // Loon generic：入口落地 / 地理位置。保留原版弹窗风格，避免直接展示底层网络错误。
-// 参考用户提供的脚本功能；网络请求优先 HTTPS，最后才回退至 ip-api.com 免费 HTTP 接口。
+// 优先使用原脚本的数据接口与字段；接口不可用时回退至其他 IP 数据源。
 
 const params = typeof $environment !== "undefined" && $environment.params || {};
 const node = params.node || params.policyGroup || "";
@@ -21,34 +21,52 @@ if (!node) {
 
 async function run() {
   if (mode === "geo") {
-    const exit = await lookup(node, "", "en");
+    const exit = await lookupIpApi(node, "", "en").catch(() => lookupFallback(node, "", "en"));
     return renderGeo(exit);
   }
 
   const entranceTask = resolveEntrance(nodeInfo.address);
   const [direct, landing, entranceIp] = await Promise.all([
-    capture(lookup("DIRECT", "", "zh-CN")),
-    capture(lookup(node, "", "zh-CN")),
+    capture(lookupDirect()),
+    capture(lookupIpApi(node, "", "zh-CN").catch(() => lookupFallback(node, "", "zh-CN"))),
     entranceTask
   ]);
-  const entrance = entranceIp ? await capture(lookup("DIRECT", entranceIp, "zh-CN")) : { ok: false };
+  const entrance = entranceIp && (!landing.ok || entranceIp !== landing.data.ip) ?
+    await capture(lookupIpApi("DIRECT", entranceIp, "zh-CN").catch(() => lookupFallback("DIRECT", entranceIp, "zh-CN"))) : { ok: false };
   return renderEntry(direct, entrance, landing, entranceIp);
 }
 
-function lookup(route, ip, lang) {
+async function lookupDirect() {
+  try {
+    const result = await requestJson("https://rmb.pingan.com.cn/itam/mas/linden/ip/request", "DIRECT", 7000);
+    if (!result || !result.data || !result.data.ip) throw new Error("直连接口未返回 IP");
+    const data = result.data;
+    return {
+      ip: data.ip, countryCode: data.countryIsoCode, country: data.country,
+      region: data.region, city: data.city, isp: data.isp
+    };
+  } catch (error) {
+    console.log("[节点诊断] 直连接口失败：" + errorText(error));
+    return lookupIpApi("DIRECT", "", "zh-CN").catch(() => lookupFallback("DIRECT", "", "zh-CN"));
+  }
+}
+
+function lookupIpApi(route, ip, lang) {
+  const suffix = ip ? encodeURIComponent(ip) : "";
+  const apiUrl = "http://ip-api.com/json/" + suffix +
+    "?fields=status,message,query,as,org,isp,country,countryCode,regionName,city,lon,lat&lang=" +
+    encodeURIComponent(lang);
+  return requestJson(apiUrl, route, 7000).then(fromIpApi);
+}
+
+function lookupFallback(route, ip, lang) {
   const suffix = ip ? encodeURIComponent(ip) : "";
   const ipwhoUrl = "https://ipwho.is/" + suffix + "?lang=" + encodeURIComponent(lang);
   const ipinfoUrl = ip ? "https://ipinfo.io/" + suffix + "/json" : "https://ipinfo.io/json";
   return firstSuccessful([
     requestJson(ipwhoUrl, route, 6500).then(fromIpwho),
     requestJson(ipinfoUrl, route, 6500).then(fromIpinfo)
-  ]).catch(async error => {
-    console.log("[节点诊断] HTTPS 查询失败（" + route + "）：" + errorText(error));
-    const apiUrl = "http://ip-api.com/json/" + suffix +
-      "?fields=status,message,query,as,org,isp,country,countryCode,regionName,city,lon,lat&lang=" +
-      encodeURIComponent(lang);
-    return fromIpApi(await requestJson(apiUrl, route, 7000));
-  });
+  ]);
 }
 
 function requestJson(url, route, timeout, headers) {
@@ -99,7 +117,8 @@ function fromIpApi(data) {
   if (!data || data.status !== "success" || !data.query) throw new Error("ip-api.com 未返回 IP");
   const orgMatch = String(data.as || "").match(/^AS(\d+)\s*(.*)$/i);
   return {
-    ip: data.query, asn: orgMatch && orgMatch[1], org: data.org || (orgMatch && orgMatch[2]),
+    ip: data.query, asn: orgMatch && orgMatch[1], asText: data.as,
+    org: data.org || (orgMatch && orgMatch[2]),
     isp: data.isp, countryCode: data.countryCode, country: data.country,
     region: data.regionName, city: data.city, longitude: data.lon, latitude: data.lat
   };
@@ -159,38 +178,38 @@ function renderEntry(direct, entrance, landing, entranceIp) {
   const directData = direct.ok ? direct.data : null;
   const landingData = landing.ok ? landing.data : null;
   const entranceData = entrance.ok ? entrance.data : null;
-  const entranceAddress = entranceIp || String(nodeInfo.address || "");
   const sections = [
     group([
       row("IP", directData && directData.ip),
       row("位置", place(directData)),
       row("运营商", directData && (directData.isp || directData.org))
-    ]),
-    group([
-      row("入口", entranceAddress),
+    ])
+  ];
+  if (entranceIp && (!landingData || entranceIp !== landingData.ip)) {
+    sections.push(group([
+      row("入口", entranceIp),
       row("位置", place(entranceData)),
       row("运营商", entranceData && (entranceData.isp || entranceData.org))
-    ]),
+    ]));
+  }
+  sections.push(
     group([
       row("落地 IP", landingData && landingData.ip),
       row("位置", place(landingData)),
       row("运营商", landingData && (landingData.isp || landingData.org))
     ]),
     '<b>节点：</b> <span style="color:#467fcf">' + escapeHtml(node) + "</span>"
-  ];
+  );
   if (!direct.ok || !landing.ok) {
-    sections.push('<div style="margin-top:12px;color:#777">未取到的结果请检查节点连通性后重试。</div>');
+    sections.push('<span style="color:#777">未取到的结果请检查节点连通性后重试。</span>');
   }
-  if (!entranceIp && nodeInfo.address && !isIp(String(nodeInfo.address))) {
-    sections.push('<div style="margin-top:8px;color:#777;font-size:13px">入口为节点配置域名，未取得解析 IP。</div>');
-  }
-  return wrap(sections.join(""));
+  return wrap(sections.join("<br/><br/>"));
 }
 
 function renderGeo(data) {
   const rows = [
     row("远端IP地址", data.ip),
-    row("远端IP ASN", asn(data.asn) + (data.org ? " " + data.org : "")),
+    row("远端IP ASN", data.asText || (asn(data.asn) + (data.org ? " " + data.org : ""))),
     row("ASN所属机构", data.org),
     row("远端ISP", data.isp),
     row("远端IP地区", [data.countryCode, flag(data.countryCode)].filter(Boolean).join(" ⟦") + (flag(data.countryCode) ? "⟧" : "")),
@@ -199,10 +218,10 @@ function renderGeo(data) {
     row("远端纬度", data.latitude)
   ];
   return wrap(
-    '<div style="letter-spacing:1px">--------------------------------</div>' +
-    rows.map(item => '<div style="margin:12px 0">' + item + "</div>").join("") +
-    '<div style="letter-spacing:1px">--------------------------------</div>' +
-    '<div style="color:#6959CD"><b>节点 ➟</b> ' + escapeHtml(node) + "</div>"
+    '--------------------------------<br/>' +
+    rows.join("<br/><br/>") +
+    '<br/>--------------------------------<br/>' +
+    '<span style="color:#6959CD"><b>节点 ➟</b> ' + escapeHtml(node) + "</span>"
   );
 }
 
@@ -211,7 +230,7 @@ function row(label, value) {
 }
 
 function group(rows) {
-  return '<div style="margin-bottom:18px">' + rows.join("<br>") + "</div>";
+  return rows.join("<br/>");
 }
 
 function wrap(html) {
@@ -220,7 +239,8 @@ function wrap(html) {
 
 function place(data) {
   if (!data) return "";
-  return [flag(data.countryCode), data.country, data.region, data.city].filter(Boolean).join(" ");
+  const country = String(data.country || "").replace(/\s*中国\s*/, "");
+  return [flag(data.countryCode), country, data.region, data.city].filter(Boolean).join(" ");
 }
 
 function flag(code) {
