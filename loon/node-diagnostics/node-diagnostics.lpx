@@ -1,0 +1,15 @@
+#!name=节点检测整合
+#!desc=节点 IP 质量、入口落地、地理位置三个独立查询入口。
+#!author=MaYIHEI, 自托管整合版
+#!loon_version=3.5.1(983)
+#!tag=节点,IP,地理位置
+# 整合文件托管于 https://github.com/LuxJon/Loon-Rules/tree/main/loon/node-diagnostics
+#!select = MaskIP,false,true
+#!select = MediaTest,true,false
+#!select = MapNotification,false,true
+
+[Script]
+generic then script("https://raw.githubusercontent.com/MaYIHEI/paperclip/refs/heads/main/loon/ipquality/ipquality.js") with tag="节点 IP 质量检测", img_url="shield.lefthalf.filled.system", timeout=50, enable=true
+generic then script("https://raw.githubusercontent.com/LuxJon/Loon-Rules/main/loon/node-diagnostics/node-diagnostics.js", "mode=entry") with tag="入口落地查询", img_url="globe.asia.australia.system", timeout=45, enable=true
+generic then script("https://raw.githubusercontent.com/LuxJon/Loon-Rules/main/loon/node-diagnostics/node-diagnostics.js", "mode=geo") with tag="地理位置查询", img_url="location.circle.system", timeout=15, enable=true
+
