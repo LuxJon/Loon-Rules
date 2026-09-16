@@ -141,17 +141,18 @@ async function resolveEntrance(address) {
       console.log("[节点诊断] Loon DNS 查询失败：" + errorText(error));
     }
   }
-  try {
-    const result = await requestJson(
-      "https://cloudflare-dns.com/dns-query?name=" + encodeURIComponent(host) + "&type=A",
-      "DIRECT", 5000, { Accept: "application/dns-json" }
-    );
-    const answer = (result.Answer || []).find(item => item.type === 1 && isIp(item.data));
-    return answer ? answer.data : "";
-  } catch (error) {
-    console.log("[节点诊断] DoH 查询失败：" + errorText(error));
-    return "";
+  const query = "?name=" + encodeURIComponent(host) + "&type=A";
+  const resolvers = ["https://dns.alidns.com/resolve", "https://cloudflare-dns.com/dns-query"];
+  for (const resolver of resolvers) {
+    try {
+      const result = await requestJson(resolver + query, "DIRECT", 5000, { Accept: "application/dns-json" });
+      const answer = (result.Answer || []).find(item => item.type === 1 && isIp(item.data));
+      if (answer) return answer.data;
+    } catch (error) {
+      console.log("[节点诊断] DoH 查询失败（" + resolver + "）：" + errorText(error));
+    }
   }
+  return "";
 }
 
 function renderEntry(direct, entrance, landing, entranceIp) {
