@@ -1,7 +1,7 @@
 #!name = Bilibili 空间实验组1试验
-#!desc = 低置信度试验：仅将启动实验 view_up_space 的2改为1，分组含义未知；0组此前无效。保留原生空间链接及两项Story优化，无来源伪装、无自动点击。与其他三合一版本互斥，测试后停用。
+#!desc = 试验留档：更新App后启动日志确认view_up_space由2改为1，用户反馈仍然半屏，应停用。分组含义未知，0组此前也无效；保留原生空间链接与两项Story优化，与其他三合一版本互斥。
 #!author = Codex
-#!date = 2026-10-17
+#!date = 2026-10-18
 #!system = iOS,iPadOS
 #!loon_version = 3.5.1(983)
 #!tag = Bilibili,界面优化
