@@ -23,9 +23,12 @@
 | Binance | [Binance.list](./Rules/Binance.list) | [Raw](https://raw.githubusercontent.com/LuxJon/Loon-Rules/main/Rules/Binance.list) |
 | Bybit | [Bybit.list](./Rules/Bybit.list) | [Raw](https://raw.githubusercontent.com/LuxJon/Loon-Rules/main/Rules/Bybit.list) |
 | Emby | [Emby.list](./Rules/Emby.list) | [Raw](https://raw.githubusercontent.com/LuxJon/Loon-Rules/main/Rules/Emby.list) |
+| Muse AI | [MuseAI.list](./Rules/MuseAI.list) | [Raw](https://raw.githubusercontent.com/LuxJon/Loon-Rules/main/Rules/MuseAI.list) |
 
 在 Loon 中添加远程规则时使用对应 Raw 地址，并按需要选择策略。
 
 Binance 规则参考 [summer0307s-star/clash-rules-collection](https://github.com/summer0307s-star/clash-rules-collection/blob/main/rules/binance.list) 对比补全，保留原有域名并增加域名关键词 `binance` 兜底匹配。
 
 Bybit 规则收录自 [wuleaves/bybit-loon-rules](https://github.com/wuleaves/bybit-loon-rules/blob/main/Bybit.list)，保留源文件内容。
+
+Muse AI 规则收录自 [juner922/muse-loon-rules](https://github.com/juner922/muse-loon-rules/blob/main/MuseAI.list)，保留其 24 条规则，包含 Muse、Meta 账号及部分 Instagram／WhatsApp 域名；这些域名均使用为该规则集选择的策略。
