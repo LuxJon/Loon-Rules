@@ -17,3 +17,6 @@ DOMAIN-SUFFIX,binancefuture.com
 DOMAIN-SUFFIX,binancecnt.com
 DOMAIN-SUFFIX,saasexch.com
 DOMAIN-SUFFIX,saasexch.cc
+
+# 关键词兜底：匹配域名任意位置包含 binance 的请求。
+DOMAIN-KEYWORD,binance

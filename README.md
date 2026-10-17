@@ -26,4 +26,6 @@
 
 在 Loon 中添加远程规则时使用对应 Raw 地址，并按需要选择策略。
 
+Binance 规则参考 [summer0307s-star/clash-rules-collection](https://github.com/summer0307s-star/clash-rules-collection/blob/main/rules/binance.list) 对比补全，保留原有域名并增加域名关键词 `binance` 兜底匹配。
+
 Bybit 规则收录自 [wuleaves/bybit-loon-rules](https://github.com/wuleaves/bybit-loon-rules/blob/main/Bybit.list)，保留源文件内容。
