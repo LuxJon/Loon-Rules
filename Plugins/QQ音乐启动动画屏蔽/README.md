@@ -11,7 +11,7 @@
 在 Loon 的插件页面添加远程订阅：
 
 ```text
-https://raw.githubusercontent.com/LuxJon/Loon-Rules/main/Plugins/QQ%E9%9F%B3%E4%B9%90%E5%90%AF%E5%8A%A8%E5%8A%A8%E7%94%BB%E5%B1%8F%E8%94%BD/QQMusic_SVIP_Loading_fixed.plugin
+https://raw.githubusercontent.com/LuxJon/Loon-Rules/main/Subscriptions/qqmusic.plugin
 ```
 
 启用插件及所需的复写／MitM，安装并信任 Loon 证书。替换原本地版本时，停用同功能旧插件，避免重复处理。

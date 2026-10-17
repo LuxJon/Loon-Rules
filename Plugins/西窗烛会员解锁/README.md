@@ -13,7 +13,7 @@
 在 Loon 的插件页面添加远程订阅：
 
 ```text
-https://raw.githubusercontent.com/LuxJon/Loon-Rules/main/Plugins/%E8%A5%BF%E7%AA%97%E7%83%9B%E4%BC%9A%E5%91%98%E8%A7%A3%E9%94%81/%E8%A5%BF%E7%AA%97%E7%83%9B.plugin
+https://raw.githubusercontent.com/LuxJon/Loon-Rules/main/Subscriptions/xichuangzhu.plugin
 ```
 
 启用插件及所需的复写／MitM，安装并信任 Loon 证书。替换原本地版本时，停用同功能旧插件，避免重复处理。

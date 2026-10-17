@@ -1,5 +1,5 @@
 #!name = Bilibili 竖屏优化
-#!icon = https://raw.githubusercontent.com/LuxJon/Loon-Rules/main/Plugins/%E5%93%94%E5%93%A9%E5%93%94%E5%93%A9%E7%AB%96%E5%B1%8F%E4%BC%98%E5%8C%96/icon.png
+#!icon = https://raw.githubusercontent.com/LuxJon/Loon-Rules/main/Subscriptions/icons/bilibili.png
 #!desc = 移除竖屏 Story 视频“上滑观看”提示，关闭直播预览倒计时自动进入，保留直播预览及手动进入。使用 JSON 复写，无需 JS 脚本。仅处理竖屏 Story 接口。
 #!author = Codex
 #!date = 2026-10-18

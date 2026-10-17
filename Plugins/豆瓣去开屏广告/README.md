@@ -11,7 +11,7 @@
 在 Loon 的插件页面添加远程订阅：
 
 ```text
-https://raw.githubusercontent.com/LuxJon/Loon-Rules/main/Plugins/%E8%B1%86%E7%93%A3%E5%8E%BB%E5%BC%80%E5%B1%8F%E5%B9%BF%E5%91%8A/Douban_No_Splash_Ad_v4_Anti_Return.plugin
+https://raw.githubusercontent.com/LuxJon/Loon-Rules/main/Subscriptions/douban.plugin
 ```
 
 启用插件及所需的复写／MitM，安装并信任 Loon 证书。替换原本地版本时，停用同功能旧插件，避免重复处理。
