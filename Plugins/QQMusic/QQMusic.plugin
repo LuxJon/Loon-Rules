@@ -1,5 +1,5 @@
 #!name=QQ音乐SVIP启动动画屏蔽-修复版
-#!icon = https://raw.githubusercontent.com/LuxJon/Loon-Rules/main/Subscriptions/icons/qqmusic.png
+#!icon = https://raw.githubusercontent.com/LuxJon/Loon-Rules/main/Plugins/QQMusic/icon.png
 #!desc=屏蔽 QQ 音乐启动时服务端下发的 SVIP/钻石 MP4 动画素材；修复写死单个 mp4 文件名导致失效的问题
 #!author=local
 

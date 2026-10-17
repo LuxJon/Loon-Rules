@@ -14,12 +14,12 @@
 适用于 Loon 3.5.1（983）及以上版本。在 Loon 插件页面添加远程订阅：
 
 ```text
-https://raw.githubusercontent.com/LuxJon/Loon-Rules/main/Subscriptions/bilibili.lpx
+https://raw.githubusercontent.com/LuxJon/Loon-Rules/main/Plugins/Bilibili/Bilibili.lpx
 ```
 
 开启复写及 MitM，安装并信任 Loon 证书；插件解密域名为 `app.bilibili.com`。两项功能直接通过 JSON 复写实现，无需下载或添加 JS，也无需开启脚本开关。
 
-请使用本页提供的固定英文订阅地址。启用后，停用旧版三合一插件、空间直达试验版及同功能重复配置，彻底退出 Bilibili 并重新打开，再进入原生竖屏模式测试。
+请使用本页提供的插件订阅地址。启用后，停用旧版三合一插件、空间直达试验版及同功能重复配置，彻底退出 Bilibili 并重新打开，再进入原生竖屏模式测试。
 
 ## 处理范围与兼容性
 

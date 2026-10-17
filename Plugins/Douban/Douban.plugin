@@ -1,5 +1,5 @@
 #!name = 豆瓣去开屏广告 v4 防复发版
-#!icon = https://raw.githubusercontent.com/LuxJon/Loon-Rules/main/Subscriptions/icons/douban.png
+#!icon = https://raw.githubusercontent.com/LuxJon/Loon-Rules/main/Plugins/Douban/icon.png
 #!desc = 在 v3 已验证有效的基础上增加多层防护：兼容未来版本号的豆瓣开屏接口、阻止新的开屏预加载、定向拦截 GDT 开屏请求，并提供可关闭的第三方广告 SDK 兜底防护。
 #!author = ChatGPT
 #!system = iOS,iPadOS
