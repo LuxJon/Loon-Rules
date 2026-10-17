@@ -1,0 +1,20 @@
+#!name = Bilibili 三合一触发诊断
+#!desc = 临时诊断版：保留两项 Story 优化和原空间直达逻辑，增加请求探测与响应入口日志。测试时停用原三合一和手动空间脚本，测试后换回正式版。
+#!author = Codex
+#!date = 2026-10-17
+#!system = iOS,iPadOS
+#!loon_version = 3.5.1(983)
+#!tag = Bilibili,界面优化
+#!type = normal
+
+# 两项 Story 修改合并为一次 JSON 处理；不匹配视频详情接口。
+[Rewrite]
+response if ${url} ~= /^https:\/\/app\.bilibili\.com\/x\/v2\/feed\/index\/story(?:\?|$)/ && ${response.status} == 200 then response.json.jq("(.data.items[]? |= del(.scroll_guide)) | if (.data.config.live_auto_enter | type) == \"object\" then .data.config.live_auto_enter.enable = false else . end")
+
+# 远程加载已实测有效的空间直达脚本。
+[Script]
+request if ${url} ~= /bilibili\.app\.viewunite\.v1\.View\// then script("https://raw.githubusercontent.com/LuxJon/Loon-Rules/main/Plugins/bilibili-enhance/Bilibili_Space_Link_Diagnostics.js", "phase=request") with timeout=10, tag="SpaceDiag 请求探测"
+response if ${url} ~= /bilibili\.app\.viewunite\.v1\.View\/View(?:\?|$)/ then script("https://raw.githubusercontent.com/LuxJon/Loon-Rules/main/Plugins/bilibili-enhance/Bilibili_Space_Link_Diagnostics.js", "phase=response") with requires_body=true, binary_body_mode=true, timeout=10, tag="SpaceDiag 响应改写"
+
+[Mitm]
+hostname = app.bilibili.com,grpc.biliapi.net
