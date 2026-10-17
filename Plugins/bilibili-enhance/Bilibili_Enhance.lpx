@@ -1,0 +1,19 @@
+#!name = Bilibili 三合一体验优化
+#!desc = 移除竖屏视频“上滑观看”提示、关闭直播预览倒计时自动进入、点击UP头像和名称直达空间。配套空间直达 JS 自动从本仓库远程加载，无需手动安装本地脚本。启用后停用同功能的独立插件和重复手动脚本。
+#!author = Codex
+#!date = 2026-10-17
+#!system = iOS,iPadOS
+#!loon_version = 3.5.1(983)
+#!tag = Bilibili,界面优化
+#!type = normal
+
+# 两项 Story 修改合并为一次 JSON 处理；不匹配视频详情接口。
+[Rewrite]
+response if ${url} ~= /^https:\/\/app\.bilibili\.com\/x\/v2\/feed\/index\/story(?:\?|$)/ && ${response.status} == 200 then response.json.jq("(.data.items[]? |= del(.scroll_guide)) | if (.data.config.live_auto_enter | type) == \"object\" then .data.config.live_auto_enter.enable = false else . end")
+
+# 远程加载已实测有效的空间直达脚本。
+[Script]
+response if ${url} ~= /^https:\/\/grpc\.biliapi\.net\/bilibili\.app\.viewunite\.v1\.View\/View(?:\?|$)/ then script("https://raw.githubusercontent.com/LuxJon/Loon-Rules/main/Plugins/bilibili-enhance/Bilibili_Space_Link.js") with requires_body=true, binary_body_mode=true, timeout=10, tag="Bilibili UP空间直达"
+
+[Mitm]
+hostname = app.bilibili.com,grpc.biliapi.net
