@@ -1,5 +1,5 @@
 #!name = Bilibili HTTPS空间跳转试验
-#!desc = 未经手机验证的 HTTPS 跳转试验：头像与名称改为 https://space.bilibili.com/UID，可能打开网页空间，不能保证进入原生完整主页。保留两项 Story 优化。与正式版、诊断版及手动空间脚本互斥启用。
+#!desc = 定位试验留档：首页推荐入口实测仍弹半屏，即使最终响应已改为 HTTPS 空间链接。未解决原生完整主页直达，不建议继续用于本次问题。保留两项 Story 优化，与其他三合一版本互斥启用。
 #!author = Codex
 #!date = 2026-10-17
 #!system = iOS,iPadOS

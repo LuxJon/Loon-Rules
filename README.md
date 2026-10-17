@@ -7,7 +7,7 @@
 ## 目录
 
 - [`Plugins/node-diagnostics`](./Plugins/node-diagnostics/)：Loon 节点检测整合。
-- [`Plugins/bilibili-enhance`](./Plugins/bilibili-enhance/)：B 站增强，包含移除上滑提示、关闭直播自动进入、UP 空间直达。
+- [`Plugins/bilibili-enhance`](./Plugins/bilibili-enhance/)：B 站增强，包含移除上滑提示、关闭直播自动进入、空间链接简化（首页推荐入口仍弹半屏）。
 - [`Rules`](./Rules/)：Binance、Emby 分流规则。
 
 ## Loon 插件
@@ -15,7 +15,7 @@
 | 插件 | 功能 | 远程订阅 |
 | --- | --- | --- |
 | [节点检测整合](./Plugins/node-diagnostics/) | 节点 IP 质量、入口落地、地理位置三个独立查询入口 | [Raw](https://raw.githubusercontent.com/LuxJon/Loon-Rules/main/Plugins/node-diagnostics/node-diagnostics.lpx) |
-| [Bilibili 增强](./Plugins/bilibili-enhance/) | 移除上滑观看提示、关闭直播倒计时自动进入、UP 空间直达 | [Raw](https://raw.githubusercontent.com/LuxJon/Loon-Rules/main/Plugins/bilibili-enhance/Bilibili_Enhance.lpx) |
+| [Bilibili 增强](./Plugins/bilibili-enhance/) | 移除上滑观看提示、关闭直播倒计时自动进入、空间链接简化（直达效果有入口限制） | [Raw](https://raw.githubusercontent.com/LuxJon/Loon-Rules/main/Plugins/bilibili-enhance/Bilibili_Enhance.lpx) |
 
 在 Loon 的插件页面添加对应 Raw 地址。配套脚本由插件远程加载，无需手动保存为本地 JS。节点检测的 IP 质量功能仍引用其原作者的远程脚本。
 
