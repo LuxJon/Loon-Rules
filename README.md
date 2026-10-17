@@ -21,6 +21,9 @@
 | 服务 | 规则文件 | 远程订阅 |
 | --- | --- | --- |
 | Binance | [Binance.list](./Rules/Binance.list) | [Raw](https://raw.githubusercontent.com/LuxJon/Loon-Rules/main/Rules/Binance.list) |
+| Bybit | [Bybit.list](./Rules/Bybit.list) | [Raw](https://raw.githubusercontent.com/LuxJon/Loon-Rules/main/Rules/Bybit.list) |
 | Emby | [Emby.list](./Rules/Emby.list) | [Raw](https://raw.githubusercontent.com/LuxJon/Loon-Rules/main/Rules/Emby.list) |
 
 在 Loon 中添加远程规则时使用对应 Raw 地址，并按需要选择策略。
+
+Bybit 规则收录自 [wuleaves/bybit-loon-rules](https://github.com/wuleaves/bybit-loon-rules/blob/main/Bybit.list)，保留源文件内容。
