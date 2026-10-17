@@ -1,0 +1,67 @@
+#!name = 豆瓣去开屏广告 v4 防复发版
+#!icon = https://raw.githubusercontent.com/LuxJon/Loon-Rules/main/Plugins/%E8%B1%86%E7%93%A3%E5%8E%BB%E5%BC%80%E5%B1%8F%E5%B9%BF%E5%91%8A/icon.png
+#!desc = 在 v3 已验证有效的基础上增加多层防护：兼容未来版本号的豆瓣开屏接口、阻止新的开屏预加载、定向拦截 GDT 开屏请求，并提供可关闭的第三方广告 SDK 兜底防护。
+#!author = ChatGPT
+#!system = iOS,iPadOS
+#!loon_version = 3.5.1(978)
+#!tag = 豆瓣,去广告,开屏,防复发
+
+[Argument]
+sdk_guard = switch,true,tag=第三方SDK兜底防护
+report_guard = switch,true,tag=开屏上报抑制
+
+[Rewrite]
+
+# ============================================================
+# 第一层：豆瓣自己的开屏广告决策接口
+# 不写死 v2，兼容以后切换到 v3/v4 等版本号。
+# ============================================================
+
+# 开屏决策：不下发主广告、SDK 候选、预加载广告、备用广告
+response if ${url} ~= /^https:\/\/api\.douban\.com\/v[0-9]+\/(?:app_ads\/)?splash_show(?:\/)?(?:\?.*)?$/ then response.body.mock("json", `{"ad_info":null,"sdk_info":"[]","ad_bid_info":"{}","preload_ad_id":null,"preload_ad_info":null,"interval":86400,"sleep_time":60,"backup_ad_id":"","backup_ad_info":null,"backend_duration":0,"postback":"{}"}`, 200) | response.header.set("X-Douban-No-Splash", "v4-show") | response.header.set("Cache-Control", "no-store, no-cache, must-revalidate")
+
+# SDK 竞价：即使豆瓣未来仍主动发起竞价，也明确返回没有获胜广告
+response if ${url} ~= /^https:\/\/api\.douban\.com\/v[0-9]+\/(?:app_ads\/)?splash_bid(?:\/)?(?:\?.*)?$/ then response.body.mock("json", `{"sdk_win":0,"sdk_id":"","sdk_ad_info":null,"backup_sdk_id":"","backup_ad_info":null,"backend_duration":0}`, 200) | response.header.set("X-Douban-No-Splash", "v4-bid") | response.header.set("Cache-Control", "no-store, no-cache, must-revalidate")
+
+# 预加载：禁止豆瓣继续向本地写入新的开屏素材
+response if ${url} ~= /^https:\/\/api\.douban\.com\/v[0-9]+\/(?:app_ads\/)?splash_preload(?:\/)?(?:\?.*)?$/ then response.body.mock("json", `{"preload_ids":[],"ads":[],"preload_uniq_ids":[]}`, 200) | response.header.set("X-Douban-No-Splash", "v4-preload") | response.header.set("Cache-Control", "no-store, no-cache, must-revalidate")
+
+
+# ============================================================
+# 第二层：GDT（优量汇）开屏兜底
+# 抓包中开屏位请求带 gdtdns_request_adtype: 3；
+# 同时存在 adtype=6 的其它广告位，所以这里只拦截 3，避免误伤普通内容。
+# ============================================================
+
+request if ${sdk_guard} == true && ${url} ~= /^https:\/\/(?:mi|v2mi)\.gdt\.qq\.com\/gdt_mview\.fcg(?:\?.*)?$/ && ${request.header['gdtdns_request_adtype']} == "3" then reject(404)
+
+# 阻止 GDT 开屏素材域继续缓存新的图片/视频
+request if ${sdk_guard} == true && ${url} ~= /^https:\/\/(?:adsmind|pgdt)\.ugdtimg\.com\// then reject(404)
+
+
+# ============================================================
+# 第三层：其它已在豆瓣启动阶段出现的广告 SDK 兜底
+# 这是“防卷土重来”保险层；默认开启。
+# 如发现某些非广告功能异常，可在插件参数里关闭“第三方SDK兜底防护”，
+# 第一层豆瓣接口拦截仍会继续生效。
+# ============================================================
+
+# 穿山甲 / Pangle 广告获取
+request if ${sdk_guard} == true && ${url} ~= /^https:\/\/api-access\.pangolin-sdk-toutiao(?:1|-b)?\.com\/api\/ad\/union\/sdk\/get_ads\// then reject(404)
+
+# Tanx 广告获取
+request if ${sdk_guard} == true && ${url} ~= /^https:\/\/et\.tanx\.com\/v2\/getcvalue(?:\?.*)?$/ then reject(404)
+
+# 京东广告 DSP
+request if ${sdk_guard} == true && ${url} ~= /^https:\/\/dsp-x\.jd\.com\/adx\/sdk(?:\?.*)?$/ then reject(404)
+
+
+# ============================================================
+# 第四层：开屏广告上报抑制
+# 不影响主功能，仅减少开屏广告相关状态/曝光回传。
+# ============================================================
+
+request if ${report_guard} == true && ${url} ~= /^https:\/\/api\.douban\.com\/v[0-9]+\/(?:app_ads\/)?splash_(?:report|statistics|postback)(?:\/)?(?:\?.*)?$/ then reject(204)
+
+[Mitm]
+hostname = api.douban.com, mi.gdt.qq.com, v2mi.gdt.qq.com, adsmind.ugdtimg.com, pgdt.ugdtimg.com, api-access.pangolin-sdk-toutiao.com, api-access.pangolin-sdk-toutiao1.com, api-access.pangolin-sdk-toutiao-b.com, et.tanx.com, dsp-x.jd.com

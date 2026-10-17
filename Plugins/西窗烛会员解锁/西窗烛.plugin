@@ -1,0 +1,12 @@
+#!name=西窗烛
+#!icon = https://raw.githubusercontent.com/LuxJon/Loon-Rules/main/Plugins/%E8%A5%BF%E7%AA%97%E7%83%9B%E4%BC%9A%E5%91%98%E8%A7%A3%E9%94%81/icon.png
+#!desc=西窗烛会员解锁
+#!author=转换
+
+[Script]
+
+http-response ^https:\/\/lchttpapi\.xczim\.com\/.* script-path=https://raw.githubusercontent.com/deezertidal/private/master/js-backup/Crack/xcz.js,timeout=60,requires-body=true,tag=西窗烛,enable=true
+
+[MITM]
+
+hostname = lchttpapi.xczim.com
