@@ -1,0 +1,20 @@
+#!name = Bilibili HTTPS空间跳转试验
+#!desc = 未经手机验证的 HTTPS 跳转试验：头像与名称改为 https://space.bilibili.com/UID，可能打开网页空间，不能保证进入原生完整主页。保留两项 Story 优化。与正式版、诊断版及手动空间脚本互斥启用。
+#!author = Codex
+#!date = 2026-10-17
+#!system = iOS,iPadOS
+#!loon_version = 3.5.1(983)
+#!tag = Bilibili,界面优化
+#!type = normal
+
+# 两项 Story 修改合并为一次 JSON 处理；不匹配视频详情接口。
+[Rewrite]
+response if ${url} ~= /^https:\/\/app\.bilibili\.com\/x\/v2\/feed\/index\/story(?:\?|$)/ && ${response.status} == 200 then response.json.jq("(.data.items[]? |= del(.scroll_guide)) | if (.data.config.live_auto_enter | type) == \"object\" then .data.config.live_auto_enter.enable = false else . end")
+
+# HTTPS 跳转路线仅作试验；请求探测用于记录触发情况。
+[Script]
+request if ${url} ~= /bilibili\.app\.viewunite\.v1\.View\// then script("https://raw.githubusercontent.com/LuxJon/Loon-Rules/main/Plugins/bilibili-enhance/Bilibili_Space_HTTPS_Test.js", "phase=request") with timeout=10, tag="SpaceHTTPS 请求探测"
+response if ${url} ~= /bilibili\.app\.viewunite\.v1\.View\/View(?:\?|$)/ then script("https://raw.githubusercontent.com/LuxJon/Loon-Rules/main/Plugins/bilibili-enhance/Bilibili_Space_HTTPS_Test.js", "phase=response") with requires_body=true, binary_body_mode=true, timeout=10, tag="SpaceHTTPS 响应改写"
+
+[Mitm]
+hostname = app.bilibili.com,grpc.biliapi.net
