@@ -1,0 +1,22 @@
+#!name = Bilibili 空间实验组1试验
+#!desc = 低置信度试验：仅将启动实验 view_up_space 的2改为1，分组含义未知；0组此前无效。保留原生空间链接及两项Story优化，无来源伪装、无自动点击。与其他三合一版本互斥，测试后停用。
+#!author = Codex
+#!date = 2026-10-17
+#!system = iOS,iPadOS
+#!loon_version = 3.5.1(983)
+#!tag = Bilibili,界面优化
+#!type = normal
+
+# 两项 Story 修改合并为一次 JSON 处理；不匹配视频详情接口。
+[Rewrite]
+response if ${url} ~= /^https:\/\/app\.bilibili\.com\/x\/resource\/abtest\/batch(?:\?|$)/ && ${response.status} == 200 then response.json.jq("if .data.ab_result.view_up_space.success == true and .data.ab_result.view_up_space.data == \"2\" then .data.ab_result.view_up_space.data = \"1\" else . end")
+response if ${url} ~= /^https:\/\/app\.bilibili\.com\/x\/v2\/feed\/index\/story(?:\?|$)/ && ${response.status} == 200 then response.json.jq("(.data.items[]? |= del(.scroll_guide)) | if (.data.config.live_auto_enter | type) == \"object\" then .data.config.live_auto_enter.enable = false else . end")
+
+# View 请求仅探测原样放行；响应使用原生链接简化逻辑。
+[Script]
+response if ${url} ~= /^https:\/\/grpc\.biliapi\.net\/bilibili\.app\.coldstart\.v1\.ColdStart\/GetColdStartDeferredData(?:\?|$)/ then script("https://raw.githubusercontent.com/LuxJon/Loon-Rules/main/Plugins/bilibili-enhance/Bilibili_Space_Cohort1_Test.js") with requires_body=true, binary_body_mode=true, timeout=10, tag="SpaceCohort1 启动配置"
+request if ${url} ~= /bilibili\.app\.viewunite\.v1\.View\// then script("https://raw.githubusercontent.com/LuxJon/Loon-Rules/main/Plugins/bilibili-enhance/Bilibili_Space_Link_Diagnostics.js", "phase=request") with timeout=10, tag="SpaceDiag 请求探测"
+response if ${url} ~= /bilibili\.app\.viewunite\.v1\.View\/View(?:\?|$)/ then script("https://raw.githubusercontent.com/LuxJon/Loon-Rules/main/Plugins/bilibili-enhance/Bilibili_Space_Link_Diagnostics.js", "phase=response") with requires_body=true, binary_body_mode=true, timeout=10, tag="SpaceDiag 响应改写"
+
+[Mitm]
+hostname = app.bilibili.com,grpc.biliapi.net
