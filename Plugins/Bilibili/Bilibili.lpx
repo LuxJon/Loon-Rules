@@ -1,6 +1,6 @@
 #!name = Bilibili 竖屏优化
 #!icon = https://raw.githubusercontent.com/LuxJon/Loon-Rules/main/Plugins/Bilibili/icon.png
-#!desc = 移除竖屏 Story 视频“上滑观看”提示，关闭直播预览倒计时自动进入；整条过滤带明确广告标记的推广视频及推广直播，保留普通视频、普通直播预览与手动进入。使用内置 JSON/JQ，无需 JS。整条过滤待手机实测。
+#!desc = 移除竖屏 Story 视频“上滑观看”提示，关闭直播预览倒计时自动进入；整条过滤竖屏推广视频及推广直播，并过滤首页推荐中的普通直播和推广直播卡片；保留竖屏普通直播预览与手动进入。使用内置 JSON/JQ，无需 JS。新增过滤待手机实测。
 #!author = Codex
 #!date = 2026-10-19
 #!system = iOS,iPadOS
@@ -14,6 +14,9 @@ response if ${url} ~= /^https:\/\/app\.bilibili\.com\/x\/v2\/feed\/index\/story(
 
 # 动态推广卡片同时覆盖 data.anchor 和 data.ads 数组，保留其他响应数据。
 response if ${url} ~= /^https:\/\/app\.bilibili\.com\/x\/v2\/feed\/index\/story\/cart(?:\?|$)/ && ${response.status} == 200 then response.json.jq("if type != \"object\" then . elif .code != 0 or (.data | type) != \"object\" then . else .data |= ( del(.anchor) | if (.ads | type) == \"array\" then .ads = [] else . end ) end")
+
+# 首页推荐：每次响应均过滤普通直播与推广直播卡片，覆盖初次加载、刷新和后续加载。
+response if ${url} ~= /^https:\/\/app\.bilibili\.com\/x\/v2\/feed\/index(?:\?|$)/ && ${response.status} == 200 then response.json.jq("def is_home_live: if type != \"object\" then false elif .goto == \"live\" or .card_goto == \"live\" or .card_goto == \"ad_live_v2\" then true elif (.player_args | type) == \"object\" then .player_args.type == \"live\" or .player_args.is_live == true or .player_args.is_live == 1 else false end; if type != \"object\" then . elif .code != 0 or (.data | type) != \"object\" then . elif (.data.items | type) != \"array\" then . else .data.items |= map(select(is_home_live | not)) end")
 
 [Mitm]
 hostname = app.bilibili.com
