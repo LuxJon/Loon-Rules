@@ -1,6 +1,6 @@
 #!name = Bilibili 竖屏优化
 #!icon = https://raw.githubusercontent.com/LuxJon/Loon-Rules/main/Plugins/Bilibili/icon.png
-#!desc = 移除竖屏 Story 视频“上滑观看”提示，关闭直播预览倒计时自动进入，保留直播预览及手动进入；新增左下推广卡片、按钮和推广评论清理。使用内置 JSON/JQ 复写，无需 JS。推广清理待手机实测。
+#!desc = 移除竖屏 Story 视频“上滑观看”提示，关闭直播预览倒计时自动进入；整条过滤带明确广告标记的推广视频及推广直播，保留普通视频、普通直播预览与手动进入。使用内置 JSON/JQ，无需 JS。整条过滤待手机实测。
 #!author = Codex
 #!date = 2026-10-19
 #!system = iOS,iPadOS
@@ -8,9 +8,9 @@
 #!tag = Bilibili,界面优化,去广告
 #!type = normal
 
-# Story 在同一条规则内先执行原有两项优化，再清理推广组件；原有处理逻辑及匹配范围保持不变。
+# Story 先执行原有两项优化，再从 items 中删除带明确广告标记的视频和直播条目。
 [Rewrite]
-response if ${url} ~= /^https:\/\/app\.bilibili\.com\/x\/v2\/feed\/index\/story(?:\?|$)/ && ${response.status} == 200 then response.json.jq("(if type == \"object\" then if .code == 0 and (.data | type) == \"object\" then (if (.data.items | type) == \"array\" then .data.items |= map(if type == \"object\" then del(.scroll_guide) else . end) else . end) | (if (.data.config | type) == \"object\" then if (.data.config.live_auto_enter | type) == \"object\" then if (.data.config.live_auto_enter | has(\"enable\")) then .data.config.live_auto_enter.enable = false else . end else . end else . end) else . end else . end) | (if type != \"object\" then . elif .code != 0 or (.data | type) != \"object\" then . elif (.data.items | type) != \"array\" then . else .data.items |= map( if type != \"object\" then . elif (.ad_info | type) != \"object\" then . else del(.story_cart_icon) | if (.ad_info.extra | type) != \"object\" then . elif (.ad_info.extra.card | type) != \"object\" then . else .ad_info.extra.card |= del( .button, .forward_reply, .story_style_selection_module ) end end ) end)")
+response if ${url} ~= /^https:\/\/app\.bilibili\.com\/x\/v2\/feed\/index\/story(?:\?|$)/ && ${response.status} == 200 then response.json.jq("(if type == \"object\" then if .code == 0 and (.data | type) == \"object\" then (if (.data.items | type) == \"array\" then .data.items |= map(if type == \"object\" then del(.scroll_guide) else . end) else . end) | (if (.data.config | type) == \"object\" then if (.data.config.live_auto_enter | type) == \"object\" then if (.data.config.live_auto_enter | has(\"enable\")) then .data.config.live_auto_enter.enable = false else . end else . end else . end) else . end else . end) | (def is_story_ad: if type != \"object\" then false elif .goto == \"vertical_ad_av\" or .goto == \"vertical_ad_live\" or .card_goto == \"vertical_ad_av\" or .card_goto == \"vertical_ad_live\" then true elif (.ad_info | type) == \"object\" then .ad_info.is_ad == true or .ad_info.is_ad == 1 else false end; if type != \"object\" then . elif .code != 0 or (.data | type) != \"object\" then . elif (.data.items | type) != \"array\" then . else .data.items |= map(select(is_story_ad | not)) end)")
 
 # 动态推广卡片同时覆盖 data.anchor 和 data.ads 数组，保留其他响应数据。
 response if ${url} ~= /^https:\/\/app\.bilibili\.com\/x\/v2\/feed\/index\/story\/cart(?:\?|$)/ && ${response.status} == 200 then response.json.jq("if type != \"object\" then . elif .code != 0 or (.data | type) != \"object\" then . else .data |= ( del(.anchor) | if (.ads | type) == \"array\" then .ads = [] else . end ) end")
