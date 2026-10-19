@@ -9,7 +9,7 @@
 | 图标 | 插件 | 功能与状态 | 远程订阅 |
 | --- | --- | --- | --- |
 | <img src="./Plugins/NodeTools/icon.png" width="40" alt="节点检测整合"> | [节点检测整合](./Plugins/NodeTools/) | 节点 IP 质量、入口落地、地理位置三个独立查询入口。 | [订阅](https://raw.githubusercontent.com/LuxJon/Loon-Rules/main/Plugins/NodeTools/NodeTools.lpx) |
-| <img src="./Plugins/Bilibili/icon.png" width="40" alt="Bilibili 竖屏优化"> | [Bilibili 竖屏优化](./Plugins/Bilibili/) | 移除竖屏「上滑观看」提示，关闭直播预览倒计时自动进入，整条过滤竖屏推广视频和推广直播，并过滤首页推荐直播卡片（新增过滤待实测）。 | [订阅](https://raw.githubusercontent.com/LuxJon/Loon-Rules/main/Plugins/Bilibili/Bilibili.lpx) |
+| <img src="./Plugins/Bilibili/icon.png" width="40" alt="Bilibili 竖屏优化"> | [Bilibili 竖屏优化](./Plugins/Bilibili/) | 首页广告与直播过滤、整条竖屏推广过滤及界面优化；保留 Biliverse 原订阅，开启的接口由本插件接管，可单独关闭（待实测）。 | [订阅](https://raw.githubusercontent.com/LuxJon/Loon-Rules/main/Plugins/Bilibili/Bilibili.lpx) |
 | <img src="./Plugins/Douban/icon.png" width="40" alt="豆瓣去开屏广告"> | [豆瓣去开屏广告](./Plugins/Douban/) | 拦截开屏广告决策、竞价和预加载，提供可关闭的广告 SDK 兜底防护。 | [订阅](https://raw.githubusercontent.com/LuxJon/Loon-Rules/main/Plugins/Douban/Douban.plugin) |
 | <img src="./Plugins/Xichuangzhu/icon.png" width="40" alt="西窗烛会员解锁"> | [西窗烛会员解锁](./Plugins/Xichuangzhu/) | 收录本地会员解锁配置；其原第三方脚本地址当前返回 404，暂不可用。 | [订阅](https://raw.githubusercontent.com/LuxJon/Loon-Rules/main/Plugins/Xichuangzhu/Xichuangzhu.plugin) |
 | <img src="./Plugins/QQMusic/icon.png" width="40" alt="QQ 音乐 SVIP 启动动画屏蔽"> | [QQ 音乐 SVIP 启动动画屏蔽](./Plugins/QQMusic/) | 屏蔽指定 CDN 下的 SVIP／钻石启动动画素材。 | [订阅](https://raw.githubusercontent.com/LuxJon/Loon-Rules/main/Plugins/QQMusic/QQMusic.plugin) |

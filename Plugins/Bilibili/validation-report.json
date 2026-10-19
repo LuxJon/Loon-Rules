@@ -1,0 +1,86 @@
+{
+  "architecture": "independent native JQ addon; unchanged Biliverse subscription",
+  "corpora": {
+    "captures": {
+      "cart_original": {
+        "snapshots": 5,
+        "input_items": 0,
+        "output_items": 0,
+        "removed_items": 0
+      },
+      "cart_rewritten": {
+        "snapshots": 5,
+        "input_items": 0,
+        "output_items": 0,
+        "removed_items": 0
+      },
+      "story_original": {
+        "snapshots": 8,
+        "input_items": 41,
+        "output_items": 29,
+        "removed_items": 12
+      },
+      "story_rewritten": {
+        "snapshots": 8,
+        "input_items": 41,
+        "output_items": 29,
+        "removed_items": 12
+      }
+    },
+    "captures211": {
+      "story_original": {
+        "snapshots": 10,
+        "input_items": 51,
+        "output_items": 35,
+        "removed_items": 16
+      },
+      "story_rewritten": {
+        "snapshots": 10,
+        "input_items": 51,
+        "output_items": 35,
+        "removed_items": 16
+      },
+      "cart_original": {
+        "snapshots": 2,
+        "input_items": 0,
+        "output_items": 0,
+        "removed_items": 0
+      },
+      "cart_rewritten": {
+        "snapshots": 2,
+        "input_items": 0,
+        "output_items": 0,
+        "removed_items": 0
+      }
+    },
+    "captures212": {
+      "home_original": {
+        "snapshots": 7,
+        "input_items": 66,
+        "output_items": 48,
+        "removed_items": 18
+      },
+      "home_rewritten": {
+        "snapshots": 5,
+        "input_items": 47,
+        "output_items": 42,
+        "removed_items": 5
+      }
+    }
+  },
+  "limitations": [
+    "Offline jq replay, not a Loon/iOS runtime test.",
+    "A matching addon body rewrite suppresses the original response script for that endpoint.",
+    "No upstream cache filling, feed preferences, Story commercial button cleanup or tracking cleanup on taken-over endpoints.",
+    "Upstream updates to those endpoints do not run while the corresponding takeover switch is enabled."
+  ],
+  "additional_home_snapshots": 2,
+  "total_json_snapshots": 64,
+  "schema_guard_cases": 54,
+  "explicit_home_ad_cases": 15,
+  "explicit_home_live_cases": 6,
+  "switch_and_scope_cases": 48,
+  "passed": true,
+  "test_groups": 7,
+  "plugin_sha256": "fc010d03514edb0fb09b4c9188a07f60e2cde4866e3a1b8359bda1ade4b5a7e7"
+}
